@@ -15,7 +15,7 @@ export class DocumentsService {
     ){}
 
 
-    async verifyDocument(id: string) {
+    async verifyDocument(id: string, user: User) {
         this.logger.log("Try to verify document", this.name)
         const document = await this.prismaService.document.findUnique({
             where: { id }
@@ -27,6 +27,18 @@ export class DocumentsService {
         }
 
         const response = this.getDocumentInfo(document);
+
+            const newHist = await this.prismaService.history.create(
+            {
+            data:{
+                userId: user.id,
+                documentId: id,
+            }
+        });
+        
+        if(!newHist){
+            this.logger.warn("Не удалось сохранить историю", this.name);
+        }
 
         this.logger.log("Successful", this.name)
         return response;
