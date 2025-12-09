@@ -15,7 +15,7 @@ export class DocumentsService {
     ){}
 
 
-    async verifyDocument(id: string): Promise<DocumentResponseDto> {
+    async verifyDocument(id: string) {
         this.logger.log("Try to verify document", this.name)
         const document = await this.prismaService.document.findUnique({
             where: { id }
@@ -55,7 +55,7 @@ export class DocumentsService {
 
     }
 
-    private getDocumentInfo(document: Document):DocumentResponseDto{
+    private getDocumentInfo(document: Document){
         
         const now = new Date();
         const expiration = new Date(document.expirationDate);
@@ -65,12 +65,13 @@ export class DocumentsService {
         const diffMs = now.getTime() - expiration.getTime();
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-        const response: DocumentResponseDto = {
+        const response = {
             ...document,
             valid: !isExpired,
-            expiresSoon: diffDays <= 14 ? true : false
+            expiresSoon: isExpired ? null : diffDays <= 14 ? true : false
         };
 
+        
         return response;
     }
 
