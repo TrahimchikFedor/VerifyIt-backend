@@ -15,7 +15,7 @@ export class DocumentsService {
     ){}
 
 
-    async verifyDocument(id: string): Promise<DocumentResponseDto> {
+    async verifyDocument(id: string) {
         this.logger.log("Try to verify document", this.name)
         const document = await this.prismaService.document.findUnique({
             where: { id }
@@ -55,22 +55,23 @@ export class DocumentsService {
 
     }
 
-    private getDocumentInfo(document: Document):DocumentResponseDto{
+    private getDocumentInfo(document: Document){
         
         const now = new Date();
         const expiration = new Date(document.expirationDate);
 
         
         const isExpired = expiration < now;
-        const diffMs = now.getTime() - expiration.getTime();
+        const diffMs = expiration.getTime() - now.getTime();
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-        const response: DocumentResponseDto = {
+        const response = {
             ...document,
-            valid: isExpired,
-            expiresSoon: diffDays <= 14 ? true : false
+            valid: !isExpired,
+            expiresSoon: isExpired ? null : diffDays <= 14 ? true : false
         };
 
+        
         return response;
     }
 
@@ -86,4 +87,24 @@ export class DocumentsService {
         });
         return newDoc
     }
+
+    async delete(id: string){
+        const document = await this.prismaService.document.findUnique({
+            where:{
+                id
+            }
+        });
+
+        if(!document){
+            this.logger.warn("Документ не найден", this.name);
+            throw new NotFoundException("Документ не найден");
+        }
+
+        await this.prismaService.document.delete({
+            where: {id}
+        });
+
+        return true;
+    }
+
 }
