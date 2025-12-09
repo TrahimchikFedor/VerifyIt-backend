@@ -1,5 +1,6 @@
+import { CreateDocumentDto } from './dto/create-document.dto';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Document } from 'prisma/generated/prisma/client';
+import { Document, User } from 'prisma/generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DocumentResponseDto } from './dto/document-response.dto';
 import { AllLogger } from 'src/common/log/logger.log';
@@ -71,5 +72,18 @@ export class DocumentsService {
         };
 
         return response;
+    }
+
+    async create(dto: CreateDocumentDto){
+        const {name, type, author, expirationDate} = dto;
+        const newDoc = await this.prismaService.document.create({
+            data: {
+                name,
+                type,
+                author,
+                expirationDate
+            }
+        });
+        return newDoc
     }
 }
