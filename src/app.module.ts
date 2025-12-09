@@ -8,13 +8,14 @@ import { LoggingMiddleware } from './common/middlewares/logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma/prisma.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { DocumentsModule } from './documents/documents.module';
 
 @Module({
   imports: [CacheModule.register({
     isGlobal: true
   }), ConfigModule.forRoot({
     isGlobal: true
-  }), AuthModule, PrismaModule],
+  }), AuthModule, PrismaModule, DocumentsModule],
   controllers: [AppController],
   providers: [AppService],
 })
