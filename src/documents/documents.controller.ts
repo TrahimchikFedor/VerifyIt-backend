@@ -21,7 +21,7 @@ export class DocumentsController {
   }
 
   @Authorization()
-  @Get('/history')
+  @Get('/history/all')
   async getHistory(@Authorized() user: User){
     return await this.documentsService.getHistory(user.id);
   }
