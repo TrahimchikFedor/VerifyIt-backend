@@ -62,7 +62,7 @@ export class DocumentsService {
 
         
         const isExpired = expiration < now;
-        const diffMs = now.getTime() - expiration.getTime();
+        const diffMs = expiration.getTime() - now.getTime();
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
         const response = {
@@ -87,4 +87,24 @@ export class DocumentsService {
         });
         return newDoc
     }
+
+    async delete(id: string){
+        const document = await this.prismaService.document.findUnique({
+            where:{
+                id
+            }
+        });
+
+        if(!document){
+            this.logger.warn("Документ не найден", this.name);
+            throw new NotFoundException("Документ не найден");
+        }
+
+        await this.prismaService.document.delete({
+            where: {id}
+        });
+
+        return true;
+    }
+
 }
