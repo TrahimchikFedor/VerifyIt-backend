@@ -67,7 +67,7 @@ export class DocumentsService {
 
         const response: DocumentResponseDto = {
             ...document,
-            valid: isExpired,
+            valid: !isExpired,
             expiresSoon: diffDays <= 14 ? true : false
         };
 
