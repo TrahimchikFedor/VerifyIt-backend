@@ -62,9 +62,8 @@ export class DocumentsService {
             this.logger.warn("История пуста", this.name);
             throw new NotFoundException("История пуста");
         }
-
-        history.map(entry => this.getDocumentInfo(entry.document));
-
+        
+        return history.map(entry => this.getDocumentInfo(entry.document));
     }
 
     private getDocumentInfo(document: Document){
