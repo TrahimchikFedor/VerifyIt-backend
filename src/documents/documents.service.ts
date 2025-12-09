@@ -28,7 +28,7 @@ export class DocumentsService {
 
         const response = this.getDocumentInfo(document);
 
-        setTimeout("",2000)
+        setTimeout(()=>{console.log()},2000)
 
         this.logger.log("Successful", this.name)
         return response;
