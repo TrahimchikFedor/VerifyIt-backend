@@ -1,13 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  output        = "generated/prisma/client"
   binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
-  output   = "generated/prisma/client"
 }
 
 datasource db {
@@ -15,14 +9,59 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model User{
-  id String @id @unique @default(uuid())
-
-  login String
-  password String
-
-  createdAt DateTime @map("created_at") @default(now())
+model User {
+  id        String   @id @unique @default(uuid())
+  login     String
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  history History[]
+
   @@map("users")
+}
+
+model Document {
+  id String @id @unique @default(uuid())
+
+  name           String
+  type           DocumentType
+  author         String
+  expirationDate DateTime     @map("expiration_date")
+
+  history History[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("documents")
+}
+
+model History{
+  id String @id @unique @default(uuid())
+
+  document Document @relation(fields:[documentId], references: [id])
+  documentId String 
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("history")
+}
+
+enum DocumentType {
+  CONTRACT
+  INNOVICE
+  ACT
+  WAYBILL
+  STATEMENT
+  ORDER
+  PROTOCOL
+  CHARTER
+  LETTER
+  CV
+  REPORT
+  REFERENCE
 }
