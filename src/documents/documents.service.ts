@@ -25,8 +25,8 @@ export class DocumentsService {
             this.logger.warn("Документ не найден", this.name);
             throw new NotFoundException("Документ не найден");
         }
-
-        const response = this.getDocumentInfo(document, "one");
+        const anyObject = {document}
+        const response = this.getDocumentInfo(anyObject, "one");
 
             const newHist = await this.prismaService.history.create(
             {
@@ -71,7 +71,6 @@ export class DocumentsService {
     private getDocumentInfo(entry: any, choose: string){
         const document = entry.document
         const now = new Date();
-        console.log(document.expirationDate)
         const expiration = new Date(document.expirationDate);
 
         const isHistory = choose == "history"
