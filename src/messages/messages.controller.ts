@@ -22,8 +22,12 @@ export class MessagesController {
       throw new UnauthorizedException('Token is required');
     }
 
+    // Очистка токена от префикса Bearer и пробелов
+    const cleanToken = token.replace(/^Bearer\s+/i, '').trim();
+    this.logger.log(`Clean token length: ${cleanToken.length}`);
+
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify(cleanToken);
       this.logger.log(`Token verified, payload: ${JSON.stringify(payload)}`);
       
       const userId = payload.id;
