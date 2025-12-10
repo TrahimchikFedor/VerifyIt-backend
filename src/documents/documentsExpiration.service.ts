@@ -42,7 +42,7 @@ export class DocumentExpirationService {
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_9AM)
-  @Cron('* */5 * * * *')
+  @Cron('* 5 * * * *')
   async checkExpiringSoon() {
     const now = new Date();
     const futureDate = new Date();
