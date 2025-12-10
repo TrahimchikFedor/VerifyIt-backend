@@ -10,7 +10,7 @@ import { User } from 'prisma/generated/prisma/client';
 export class MessagesController {
   constructor(private messagesService: MessagesService) {}
 
-  // @Authorization()
+  @Authorization()
   @Sse('stream')
   stream(@Authorized() user: User): Observable<MessageEvent> {
     const userId = user.id;
