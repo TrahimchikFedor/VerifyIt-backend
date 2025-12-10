@@ -60,6 +60,11 @@ export class MessagesService {
     
     for (const [key, value] of Object.entries(obj)) {
       if (value instanceof Date) {
+        // Проверяем, что дата валидна
+        if (isNaN(value.getTime())) {
+          this.logger.warn(`Invalid date found for key ${key}, skipping`);
+          continue; // Пропускаем невалидные даты
+        }
         serialized[key] = value.toISOString();
       } else if (value && typeof value === 'object' && !Array.isArray(value)) {
         serialized[key] = this.serializeNotification(value);
