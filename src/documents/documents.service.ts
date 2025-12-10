@@ -54,6 +54,7 @@ export class DocumentsService {
                 createdAt: 'desc'
             },
             select:{
+                id: true,
                 document: true,
                 createdAt: true,
             }
@@ -82,7 +83,8 @@ export class DocumentsService {
             ...document,
             valid: !isExpired,
             expiresSoon: isExpired ? null : diffDays <= 14 ? true : false,
-            createdHistory: isHistory ? entry.createdAt : null
+            createdHistory: isHistory ? entry.createdAt : null,
+            historyId: isHistory ? entry.id : null
         };
 
         
@@ -108,19 +110,16 @@ export class DocumentsService {
                 id
             }
         });
-        await this.prismaService.history.delete({
-            where: {id}
-        });
-        console.log(document)
+
         if(!document){
             console.log("delete")
             this.logger.warn("Документ не найден", this.name);
             throw new NotFoundException("Документ не найден");
         }
 
-        // await this.prismaService.history.delete({
-        //     where: {id}
-        // });
+        await this.prismaService.history.delete({
+            where: {id}
+        });
 
         return true;
     }
