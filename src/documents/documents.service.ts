@@ -25,8 +25,8 @@ export class DocumentsService {
             this.logger.warn("Документ не найден", this.name);
             throw new NotFoundException("Документ не найден");
         }
-
-        const response = this.getDocumentInfo(document, "one");
+        const anyObject = {document}
+        const response = this.getDocumentInfo(anyObject, "one");
 
             const newHist = await this.prismaService.history.create(
             {
@@ -64,10 +64,7 @@ export class DocumentsService {
             throw new NotFoundException("История пуста");
         }
 
-        const base = history;
-        console.log(base)
         const norm = history.map(entry => this.getDocumentInfo(entry, "history"));
-        console.log(norm)
         return norm
     }
 

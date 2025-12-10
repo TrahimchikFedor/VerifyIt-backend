@@ -14,7 +14,8 @@ export class DocumentExpirationService {
     private messagesService: MessagesService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  //@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron('0 */1 * * * *')
   async checkExpiredDocuments() {
     this.logger.log('Запуск проверки истекших документов', this.name);
 
@@ -41,7 +42,8 @@ export class DocumentExpirationService {
     this.logger.log(`Обработано ${expiredDocs.length} истекших документов`, this.name);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  // @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  @Cron('0 */1 * * * *')
   async checkExpiringSoon() {
     const now = new Date();
     const futureDate = new Date();
@@ -57,6 +59,7 @@ export class DocumentExpirationService {
     expiringSoon.forEach(doc => {
       const uniqueUsers = [...new Set(doc.history.map(h => h.userId))];
       uniqueUsers.forEach(userId => {
+        
         this.messagesService.sendNotification({
           userId,
           type: 'EXPIRING_SOON',

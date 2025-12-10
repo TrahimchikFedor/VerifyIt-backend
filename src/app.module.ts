@@ -10,13 +10,14 @@ import { PrismaService } from './prisma/prisma.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { DocumentsModule } from './documents/documents.module';
 import { MessagesModule } from './messages/messages.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [CacheModule.register({
     isGlobal: true
   }), ConfigModule.forRoot({
     isGlobal: true
-  }), AuthModule, PrismaModule, DocumentsModule, MessagesModule],
+  }), ScheduleModule.forRoot(), AuthModule, PrismaModule, DocumentsModule, MessagesModule],
   controllers: [AppController],
   providers: [AppService],
 })
