@@ -16,27 +16,8 @@ export class MessagesService {
   private notifications$ = new Subject<Notification>();
 
   getUserNotifications(userId: string): Observable<Notification> {
-    const userNotifications$ = this.notifications$.asObservable().pipe(
+    return this.notifications$.asObservable().pipe(
       filter(notification => notification.userId === userId)
-    );
-
-    const keepAlive$ = interval(30000).pipe(
-      map(() => ({
-        userId,
-        type: 'KEEP_ALIVE' as const,
-        message: '',
-        timestamp: new Date()
-      }))
-    );
-
-    return userNotifications$.pipe(
-      merge(keepAlive$),
-      startWith({
-        userId,
-        type: 'KEEP_ALIVE' as const,
-        message: '',
-        timestamp: new Date()
-      })
     );
   }
 
