@@ -64,7 +64,7 @@ export class DocumentsService {
             throw new NotFoundException("История пуста");
         }
 
-        const base = document;
+        const base = history;
         console.log(base)
         const norm = history.map(entry => this.getDocumentInfo(entry, "history"));
         console.log(norm)
