@@ -1,7 +1,8 @@
-import { Controller, Sse, Req, Query } from '@nestjs/common';
-import { Observable, map } from 'rxjs';
+import { Controller, Sse, Query, UnauthorizedException } from '@nestjs/common';
+import { Observable, map, throwError } from 'rxjs';
 import { MessagesService } from './messages.service';
 import { JwtService } from '@nestjs/jwt';
+
 
 @Controller('notifications')
 export class MessagesController {
@@ -12,9 +13,13 @@ export class MessagesController {
 
   @Sse('stream')
   stream(@Query('token') token: string): Observable<MessageEvent> {
+    if (!token) {
+      throw new UnauthorizedException('Token is required');
+    }
+
     try {
       const payload = this.jwtService.verify(token);
-      const userId = payload.sub || payload.userId;
+      const userId = payload.sub || payload.userId || payload.id;
       
       return this.messagesService.getUserNotifications(userId).pipe(
         map((notification) => ({
@@ -22,7 +27,7 @@ export class MessagesController {
         } as MessageEvent))
       );
     } catch (error) {
-      throw new Error('Invalid token');
+      throw new UnauthorizedException('Invalid token');
     }
   }
 }
