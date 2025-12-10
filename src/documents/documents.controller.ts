@@ -11,8 +11,8 @@ export class DocumentsController {
 
   @Authorization()
   @Get(':id')
-  async verifyDocument(@Param('id') id: string){
-    return await this.documentsService.verifyDocument(id);
+  async verifyDocument(@Param('id') id: string, @Authorized() user: User){
+    return await this.documentsService.verifyDocument(id, user);
   }
 
   @Post()
@@ -21,7 +21,7 @@ export class DocumentsController {
   }
 
   @Authorization()
-  @Get('history')
+  @Get('history/all')
   async getHistory(@Authorized() user: User){
     return await this.documentsService.getHistory(user.id);
   }

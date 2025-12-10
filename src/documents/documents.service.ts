@@ -15,7 +15,7 @@ export class DocumentsService {
     ){}
 
 
-    async verifyDocument(id: string) {
+    async verifyDocument(id: string, user: User) {
         this.logger.log("Try to verify document", this.name)
         const document = await this.prismaService.document.findUnique({
             where: { id }
@@ -26,7 +26,19 @@ export class DocumentsService {
             throw new NotFoundException("Документ не найден");
         }
 
-        const response = this.getDocumentInfo(document);
+        const response = this.getDocumentInfo(document, "one");
+
+            const newHist = await this.prismaService.history.create(
+            {
+            data:{
+                userId: user.id,
+                documentId: id,
+            }
+        });
+        
+        if(!newHist){
+            this.logger.warn("Не удалось сохранить историю", this.name);
+        }
 
         this.logger.log("Successful", this.name)
         return response;
@@ -42,7 +54,8 @@ export class DocumentsService {
                 createdAt: 'desc'
             },
             select:{
-                document: true
+                document: true,
+                createdAt: true,
             }
         });
 
@@ -51,16 +64,19 @@ export class DocumentsService {
             throw new NotFoundException("История пуста");
         }
 
-        history.map(entry => this.getDocumentInfo(entry.document));
-
+        const base = history;
+        console.log(base)
+        const norm = history.map(entry => this.getDocumentInfo(entry, "history"));
+        console.log(norm)
+        return norm
     }
 
-    private getDocumentInfo(document: Document){
-        
+    private getDocumentInfo(entry: any, choose: string){
+        const document = entry.document
         const now = new Date();
         const expiration = new Date(document.expirationDate);
 
-        
+        const isHistory = choose == "history"
         const isExpired = expiration < now;
         const diffMs = expiration.getTime() - now.getTime();
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
@@ -68,7 +84,8 @@ export class DocumentsService {
         const response = {
             ...document,
             valid: !isExpired,
-            expiresSoon: isExpired ? null : diffDays <= 14 ? true : false
+            expiresSoon: isExpired ? null : diffDays <= 14 ? true : false,
+            createdHistory: isHistory ? entry.createdAt : null
         };
 
         
@@ -96,6 +113,7 @@ export class DocumentsService {
         });
 
         if(!document){
+            console.log("delete")
             this.logger.warn("Документ не найден", this.name);
             throw new NotFoundException("Документ не найден");
         }

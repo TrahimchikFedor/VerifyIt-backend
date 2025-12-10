@@ -9,13 +9,14 @@ import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma/prisma.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { DocumentsModule } from './documents/documents.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [CacheModule.register({
     isGlobal: true
   }), ConfigModule.forRoot({
     isGlobal: true
-  }), AuthModule, PrismaModule, DocumentsModule],
+  }), AuthModule, PrismaModule, DocumentsModule, MessagesModule],
   controllers: [AppController],
   providers: [AppService],
 })
