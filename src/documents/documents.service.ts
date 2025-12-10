@@ -64,16 +64,14 @@ export class DocumentsService {
             throw new NotFoundException("История пуста");
         }
 
-        const base = history;
-        console.log(base)
         const norm = history.map(entry => this.getDocumentInfo(entry, "history"));
-        console.log(norm)
         return norm
     }
 
     private getDocumentInfo(entry: any, choose: string){
         const document = entry.document
         const now = new Date();
+        console.log(document.expirationDate)
         const expiration = new Date(document.expirationDate);
 
         const isHistory = choose == "history"
