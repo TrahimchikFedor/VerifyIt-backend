@@ -9,6 +9,9 @@ export interface Notification {
   documentName?: string;
   message: string;
   timestamp: string;
+  createdAt?: string;
+  expirationDate?: string;
+  [key: string]: any; // для дополнительных полей
 }
 
 @Injectable()
@@ -43,9 +46,29 @@ export class MessagesService {
     );
   }
 
-  sendNotification(notification: Notification) {
+  sendNotification(notification: any) {
     this.logger.log(`Sending notification to user ${notification.userId}: ${notification.message}`);
-    this.notifications$.next(notification);
+    
+    // Сериализуем все поля, преобразуя Date в строки
+    const cleanNotification = this.serializeNotification(notification);
+    
+    this.notifications$.next(cleanNotification);
+  }
+
+  private serializeNotification(obj: any): Notification {
+    const serialized: any = {};
+    
+    for (const [key, value] of Object.entries(obj)) {
+      if (value instanceof Date) {
+        serialized[key] = value.toISOString();
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        serialized[key] = this.serializeNotification(value);
+      } else {
+        serialized[key] = value;
+      }
+    }
+    
+    return serialized;
   }
 
   onModuleDestroy() {
