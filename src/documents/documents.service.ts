@@ -54,6 +54,7 @@ export class DocumentsService {
                 createdAt: 'desc'
             },
             select:{
+                id: true,
                 document: true,
                 createdAt: true,
             }
@@ -82,7 +83,8 @@ export class DocumentsService {
             ...document,
             valid: !isExpired,
             expiresSoon: isExpired ? null : diffDays <= 14 ? true : false,
-            createdHistory: isHistory ? entry.createdAt : null
+            createdHistory: isHistory ? entry.createdAt : null,
+            historyId: isHistory ? entry.id : null
         };
 
         
@@ -103,7 +105,7 @@ export class DocumentsService {
     }
 
     async delete(id: string){
-        const document = await this.prismaService.document.findUnique({
+        const document = await this.prismaService.history.findUnique({
             where:{
                 id
             }
@@ -115,7 +117,7 @@ export class DocumentsService {
             throw new NotFoundException("Документ не найден");
         }
 
-        await this.prismaService.document.delete({
+        await this.prismaService.history.delete({
             where: {id}
         });
 
