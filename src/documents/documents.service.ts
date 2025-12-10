@@ -103,7 +103,7 @@ export class DocumentsService {
     }
 
     async delete(id: string){
-        const document = await this.prismaService.document.findUnique({
+        const document = await this.prismaService.history.findUnique({
             where:{
                 id
             }
@@ -115,7 +115,7 @@ export class DocumentsService {
             throw new NotFoundException("Документ не найден");
         }
 
-        await this.prismaService.document.delete({
+        await this.prismaService.history.delete({
             where: {id}
         });
 
