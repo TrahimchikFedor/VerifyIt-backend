@@ -108,16 +108,19 @@ export class DocumentsService {
                 id
             }
         });
-
+        await this.prismaService.history.delete({
+            where: {id}
+        });
+        console.log(document)
         if(!document){
             console.log("delete")
             this.logger.warn("Документ не найден", this.name);
             throw new NotFoundException("Документ не найден");
         }
 
-        await this.prismaService.history.delete({
-            where: {id}
-        });
+        // await this.prismaService.history.delete({
+        //     where: {id}
+        // });
 
         return true;
     }

@@ -15,8 +15,6 @@ export class MessagesController {
 
   @Sse('stream')
   stream(@Query('token') token: string): Observable<MessageEvent> {
-    this.logger.log(`SSE connection attempt with token: ${token ? 'present' : 'missing'}`);
-    
     if (!token) {
       this.logger.warn('No token provided');
       throw new UnauthorizedException('Token is required');
@@ -24,11 +22,9 @@ export class MessagesController {
 
     // Очистка токена от префикса Bearer и пробелов
     const cleanToken = token.replace(/^Bearer\s+/i, '').trim();
-    this.logger.log(`Clean token length: ${cleanToken.length}`);
 
     try {
       const payload = this.jwtService.verify(cleanToken);
-      this.logger.log(`Token verified, payload: ${JSON.stringify(payload)}`);
       
       const userId = payload.id;
       
@@ -37,7 +33,6 @@ export class MessagesController {
         throw new UnauthorizedException('Invalid token payload');
       }
       
-      this.logger.log(`Starting SSE stream for user: ${userId}`);
       return this.messagesService.getUserNotifications(userId).pipe(
         map((notification) => ({
           data: notification,
