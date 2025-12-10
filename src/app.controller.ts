@@ -10,7 +10,7 @@ import { ApiAcceptedResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagge
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('hello')
+  @Get()
   @Authorization()
   getHello(){
     return this.appService.getHello();
