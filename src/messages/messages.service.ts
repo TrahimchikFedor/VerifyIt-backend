@@ -24,7 +24,7 @@ export class MessagesService {
       map(() => ({
         userId,
         type: 'KEEP_ALIVE' as const,
-        message: 'keep-alive',
+        message: '',
         timestamp: new Date()
       }))
     );
@@ -34,7 +34,7 @@ export class MessagesService {
       startWith({
         userId,
         type: 'KEEP_ALIVE' as const,
-        message: 'connected',
+        message: '',
         timestamp: new Date()
       })
     );
