@@ -22,6 +22,7 @@ export class MessagesService {
   }
 
   sendNotification(notification: Notification) {
+    console.log(notification);
     this.notifications$.next(notification);
   }
 }
